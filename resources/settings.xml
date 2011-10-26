@@ -1,0 +1,6 @@
+<settings>
+    <category label="30200">
+        <setting id="username" type="text" label="30201" default="" />
+        <setting id="pwd" type="text" option="hidden" label="30202" enable="!eq(-1,)" default="" />
+    </category>
+</settings>

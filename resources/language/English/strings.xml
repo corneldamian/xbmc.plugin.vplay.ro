@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <!-- Category strings -->
+    <string id="30200">Login Information</string>
+    <string id="30201">Username</string>
+    <string id="30202">Password</string>
+</strings>

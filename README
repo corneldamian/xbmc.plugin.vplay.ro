@@ -1,2 +1,10 @@
 XBMC Plugin for vplay.ro
 
+INSTALATION
+copy to XBMC/addons as plugin.vplay.ro
+
+for this plugin to work you need the module  script.module.simplejson 
+	http://code.google.com/p/anarchintosh-projects/downloads/list
+
+
+tested on atv 2/mac os/windows 7
