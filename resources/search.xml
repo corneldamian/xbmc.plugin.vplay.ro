@@ -1,0 +1,5 @@
+<settings>
+    <category label="30203">
+        <setting id="search" type="text" label="30204" default="" />
+    </category>
+</settings>

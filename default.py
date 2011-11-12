@@ -1,5 +1,19 @@
 '''
     Vplay.ro plugin for XBMC
+    Copyright (C) 2010-2011 Tobias Ussing And Henrik Mosgaard Jensen
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import sys, xbmcaddon, xbmcplugin, urllib, urllib2, xbmcgui
@@ -9,7 +23,6 @@ import res, time
 # plugin constants
 __version__ = "1.0"
 __plugin__ = "Vplay" + __version__
-__author__ = ""
 __url__ = "www.xbmc.com"
 
 # xbmc hooks
@@ -19,13 +32,15 @@ __dbg__ = __settings__.getSetting("debug") == "true"
 
 
 def OPTIONS():
-    addDir('Favorite', res.urls['serials'], 4, '')
-    addDir('Seriale', res.urls['serials'], 1, '')
-    addLink('Search','http://vplay.ro/serials/','', 'search')    
-    addLink('Login','http://vplay.ro/login/','', 'login')
+    re = vplayBrowser.ListResources();
+    addDir('Favorite', res.urls['serials'], 4, re.get_thumb('favorite'), 6)
+    addDir('Seriale', res.urls['serials'], 1, re.get_thumb('seriale'), 30)
+    addDir('Search','http://vplay.ro/serials/?s', 5, re.get_thumb('search-icon'), 0)    
+    addLink('Login','http://vplay.ro/login/', re.get_thumb('login') , 'login')
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
-def SERIAL(page=None, type=None):
+def SERIAL(page=None, type=None, search=None):
+    #print "SERIAL: page: " + str(page) + " type: " + str(type) + " search: " + str(search)
     if page == None:
         page = 1
     try:
@@ -34,18 +49,20 @@ def SERIAL(page=None, type=None):
         page = 1
         
     browser = vplayBrowser.ListResources()
-    lst = browser.getSerials(page=page, type=type)
+    lst = browser.getSerials(page=page, type=type, search=search)
     last_page = browser.getLastPage()
-    print "DEFAULT: " + str(last_page)
     for i in lst:
         main = res.urls['main']
         url = main + str(i[0])
-        addDir(i[2],url, 2, i[3])
+        addDir(i[2],url, 2, i[3], len(lst))
     
     page += 1
+    mode = 1;
+    if search != None:
+	mode = 5
     if page < last_page:
         t = browser.get_thumb('next')
-        addNext('Next',page, 1, t)
+        addNext('Next',page, 5, t)
     
     xbmc.executebuiltin("Container.SetViewMode(500)") 
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
@@ -54,7 +71,6 @@ def SERIAL(page=None, type=None):
 def get_params():
     param=[]
     paramstring=sys.argv[2]
-    print paramstring
     if len(paramstring)>=2:
             params=sys.argv[2]
             cleanedparams=params.replace('?','')
@@ -107,14 +123,13 @@ def addNext(name,page,mode,iconimage):
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
     return ok
 
-def addDir(name,url,mode,iconimage):
+def addDir(name,url,mode,iconimage, len = 0):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
     ok=True
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
     liz.setInfo( type="Video", infoLabels={ "Title": name } )
-    ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+    ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True, totalItems = len)
     return ok
-
 
 def addLink(name,url,iconimage,action):
     ok=True
@@ -124,10 +139,18 @@ def addLink(name,url,iconimage,action):
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
     return ok
 
+def checkVideoLink(url):
+    return url
+    import vplayCommon
+    resp = urllib2.urlopen(vplayCommon.HeadRequest(url))
+    newurl = resp.geturl();
+    if newurl != url:
+	print "CHECK URL: OLD VIDEO URL: " + url
+	print "CHECK URL: NEW VIDEO URL: " + newurl
+    return newurl
 
 def startPlugin():
     params=get_params()
-    print params
     url=None
     name=None
     mode=None
@@ -150,38 +173,48 @@ def startPlugin():
     except:
         pass
 
-    print "Mode: "+str(mode)
-    print "URL: "+str(url)
-    print "Name: "+str(name)
+    #print "Mode: "+str(mode)
+    #print "URL: "+str(url)
+    #print "Name: "+str(name)
+    #print "Handle: "+sys.argv[1]
 
 
     if mode==None or url==None or len(url)<1:
         if action == None:
-            print "mode 0"
+            #print "mode 0"
             OPTIONS()
     elif mode==1 and action==None:
-        print "mode 1"
+        #print "mode 1"
         SERIAL(url, "Categorii")
     elif mode==2 and action==None:
-        print "mode 2"
+        #print "mode 2"
         SEZON(url)
     elif mode==3 and action==None:
-        print "mode 3"
+        #print "mode 3"
         VIDEOLINKS(url,name)
     elif mode==4 and action==None:
-        print "mode 3"
+        #print "mode 3"
         SERIAL(url, "Favorite")
+    elif mode==5:
+	if url.isdigit():
+		SERIAL(url, "Search", __settings__.getSetting( "search" )); 
+	else:
+        	__search__.search()
+		if __search__.getResponse() != None:
+            		SERIAL(None, "Search", __search__.getResponse() )
 
         
     if action == 'play_video':
         details = __link__.getRealLink(url)
-        player = xbmc.Player()
-        
+
+	details['url'] = checkVideoLink(details['url'])
+
+        player = xbmc.Player( xbmc.PLAYER_CORE_MPLAYER ) 
         player.play(details['url'])
         while not player.isPlaying():
             time.sleep(1)
             
-        print "DEFAULT: -->" + str(details['subs'])
+        #print "DEFAULT: -->" + str(details['subs'])
         s = None
         if 'ro' in details['subs']:
             s = details['subs']['ro']
@@ -194,7 +227,8 @@ def startPlugin():
 
 
 if (__name__ == "__main__" ):
-    import login
+    import login, search
+    __search__ = search.Search()
     __login__ = login.Login()
     __login__.login(login=True)
     import vplayBrowser
@@ -202,4 +236,5 @@ if (__name__ == "__main__" ):
     import vplayScraper
     __link__ = vplayBrowser.linkResolution()
     startPlugin()
+
 

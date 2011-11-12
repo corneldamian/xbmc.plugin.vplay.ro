@@ -20,6 +20,10 @@ class SmartRedirectHandler(urllib2.HTTPRedirectHandler):
         result.status = code                                
         return result
 
+class HeadRequest(urllib2.Request):
+   def get_method(self):
+	return "HEAD"
+
 class Http:
 
     def __init__(self):

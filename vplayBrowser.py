@@ -1,4 +1,4 @@
-import vplayCommon, login, vplayScraper
+import vplayCommon, login, vplayScraper, search
 import res
 import xbmc
 import sys
@@ -13,6 +13,7 @@ class ListResources:
     __plugin__ = sys.modules[ "__main__" ].__plugin__
     __dbg__ = sys.modules[ "__main__" ].__dbg__
     __login__ = sys.modules[ "__main__" ].__login__
+    __search__ = sys.modules[ "__main__" ].__search__
     
     def get_thumb(self, name):
         THUMBNAIL_PATH = os.path.join( self.__settings__.getAddonInfo('path'), "thumbnails" )
@@ -44,7 +45,7 @@ class ListResources:
                 last_page = 1
         return last_page
         
-    def getSerials(self, page=None, type=None):
+    def getSerials(self, page=None, type=None, search=None):
         self.session = self.__settings__.getSetting('session')
         if not self.session:
             self.__login__.login()
@@ -55,9 +56,12 @@ class ListResources:
         else:
             try:
                 int(page)
-                url = res.urls['serials'] + "/?page=" + str(page)
+	        url = res.urls['serials'] + "/?page=" + str(page)
             except:
                 url = res.urls['serials']
+	if type == "Search":
+		url += "&s=" + search
+
         cookie = str(self.session)
         ret = self.http_lib._get(url, cookie)
         if ret['httpcode'] == 200:
@@ -65,13 +69,17 @@ class ListResources:
                 lst = self.scrap.scrapSerials(ret['httpmsg'])
             elif type == "Favorite":
                 lst = self.scrap.scrapFavorite(ret['httpmsg'])
+            elif type == "Search":
+                lst = self.scrap.scrapSearch(ret['httpmsg'])
+		if len(lst) < 1 and int(page) == 1:
+		    self.__search__.noResult();
             else:
                 lst = self.scrap.scrapSerials(ret['httpmsg'])
         elif ret['httpcode'] == 301:
             self.__login__.login()
         else:
             raise IOError('Could not get serial list: %s --> %s' % (ret['httpcode'], ret['httpmsg']))
-        
+
         return lst
         
     def getSesons(self, url):

@@ -6,6 +6,10 @@ class Scrap:
     def scrapFavorite(self, page):
         match=re.compile('<a href="(/serials/browse.do\?sid=[0-9]+)" target="_top" class="group-item"(.+?)title="(.+?)"><img src="(.+?)" width="312" height="103">(.+?)</a>').findall(page)
         return match
+
+    def scrapSearch(self, page):
+        match=re.compile('<a href="(/serials/browse.do\?sid=[0-9]+)" target="_top" class="group-item"(.+?)title="(.+?)"><img src="(.+?)" width="312" height="103" />(.+?)</a>').findall(page)
+        return match
         
     def scrapSerials(self, page):
         match=re.compile('<a href="(/serials/browse.do\?sid=[0-9]+)" target="_top"  class="group-item"(.+?)title="Seriale Online: (.+?)"><img src="(.+?)" width="312" height="103">(.+?)</a>').findall(page)
