@@ -17,9 +17,13 @@ def OPTIONS():
     re = vplayBrowser.ListResources();
     addDir('Favorite', res.urls['serials'], 4, re.get_thumb('favorite'), 6)
     addDir('Seriale', res.urls['serials'], 1, re.get_thumb('seriale'), 30)
+    if __settings__.getSetting('last_movie'):
+    	import simplejson as json
+    	movie = json.loads(__settings__.getSetting('last_movie'))
+        addDir(movie['name'], movie['url'], 6, re.get_thumb('last'), 0)    
     addDir('Search','http://vplay.ro/serials/?s', 5, re.get_thumb('search-icon'), 0)    
     addLink('Login','http://vplay.ro/login/', re.get_thumb('login') , 'login')
-    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
 def SERIAL(page=None, type=None, search=None):
     #print "SERIAL: page: " + str(page) + " type: " + str(type) + " search: " + str(search)
@@ -36,6 +40,7 @@ def SERIAL(page=None, type=None, search=None):
     for i in lst:
         main = res.urls['main']
         url = main + str(i[0])
+	
         addDir(i[2],url, 2, i[3], len(lst))
     
     page += 1
@@ -87,7 +92,10 @@ def VIDEOLINKS(url,name):
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
 
-def SEZON(url):
+def SEZON(url, name):
+    import simplejson as json
+    movie = json.dumps({"name": name, "url": url})
+    __settings__.setSetting('last_movie', movie)
     browser = vplayBrowser.ListResources()
     lst = browser.getSesons(url)
     for i in lst:
@@ -170,7 +178,7 @@ def startPlugin():
         SERIAL(url, "Categorii")
     elif mode==2 and action==None:
         #print "mode 2"
-        SEZON(url)
+        SEZON(url, name)
     elif mode==3 and action==None:
         #print "mode 3"
         VIDEOLINKS(url,name)
@@ -184,6 +192,9 @@ def startPlugin():
         	__search__.search()
 		if __search__.getResponse() != None:
             		SERIAL(None, "Search", __search__.getResponse() )
+    elif mode==6 and action==None:
+        #print "mode 6"
+        SEZON(url, name)
 
         
     if action == 'play_video':
