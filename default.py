@@ -40,8 +40,8 @@ def SERIAL(page=None, type=None, search=None):
     for i in lst:
         main = res.urls['main']
         url = main + str(i[0])
-	
-        addDir(i[2],url, 2, i[3], len(lst))
+
+        addDir(i[1],url, 2, i[3])
     
     page += 1
     mode = 1;
@@ -52,7 +52,7 @@ def SERIAL(page=None, type=None, search=None):
         addNext('Next',page, 5, t)
     
     xbmc.executebuiltin("Container.SetViewMode(500)") 
-    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
 
 def get_params():
@@ -75,6 +75,7 @@ def get_params():
 
 
 def VIDEOLINKS(url,name):
+    print url
     browser = vplayBrowser.ListResources()
     lst = browser.getEpisodes(url)
     for i in lst:
@@ -163,10 +164,10 @@ def startPlugin():
     except:
         pass
 
-    #print "Mode: "+str(mode)
-    #print "URL: "+str(url)
-    #print "Name: "+str(name)
-    #print "Handle: "+sys.argv[1]
+    print "Mode: "+str(mode)
+    print "URL: "+str(url)
+    print "Name: "+str(name)
+    print "Handle: "+sys.argv[1]
 
 
     if mode==None or url==None or len(url)<1:
@@ -199,6 +200,7 @@ def startPlugin():
         
     if action == 'play_video':
         details = __link__.getRealLink(url)
+        print details
 
 	details['url'] = checkVideoLink(details['url'])
 

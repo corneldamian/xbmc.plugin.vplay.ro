@@ -64,12 +64,14 @@ class Login:
         raise ValueError('Could not find session ID')
             
     def _httpLogin(self, usr, pwd):
+        print "Login started"
         cookie = self.http_lib._get(res.urls['login'])['cookie']
-        postData = { "username": usr, "pwd": pwd, "remember_me": "1", "login": "Conectare" }
+        postData = { "usr_vplay": usr, "pwd": pwd, "rbm": "1", "login": "Conectare" }
         ret = self.http_lib._post(self.login_url, postData, cookie)
         if ret['httpcode'] != 302:
             raise Exception('Failed to login' + str(ret['httpcode']))
-        
+
+        print "Login ok"
         self.session = cookie
         self.__settings__.setSetting('session', str(self.session))
         

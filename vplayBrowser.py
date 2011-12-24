@@ -38,11 +38,11 @@ class ListResources:
             print "PAGE ==> " + str(last_page)
         else:
             last_page = 1
-        if len(last_page) > 0:
-            try:
-                last_page = int(last_page[0][0])
-            except:
-                last_page = 1
+#        if len(last_page) > 0:
+#            try:
+#                last_page = int(last_page[0][0])
+#            except:
+#                last_page = 1
         return last_page
         
     def getSerials(self, page=None, type=None, search=None):
@@ -63,6 +63,7 @@ class ListResources:
 		url += "&s=" + search
 
         cookie = str(self.session)
+        lst = [];
         ret = self.http_lib._get(url, cookie)
         if ret['httpcode'] == 200:
             if type == None or type == "Categorii":
@@ -90,6 +91,7 @@ class ListResources:
             
         cookie =  str(self.session)
         ret = self.http_lib._get(url, cookie)
+        lst = [];
         if ret['httpcode'] == 200:
             lst = self.scrap.scrapSeasons(ret['httpmsg'])
         elif ret['httpcode'] == 301:
@@ -107,6 +109,7 @@ class ListResources:
             
         cookie =  str(self.session)
         ret = self.http_lib._get(url, cookie)
+        lst = [];
         if ret['httpcode'] == 200:
             lst = self.scrap.scrapEpisodes(ret['httpmsg'])
         elif ret['httpcode'] == 301:
@@ -222,8 +225,10 @@ class linkResolution:
         return ret
 
     def processDinosaur(self, key):
-        url = res.urls['dino'] + '?key=' + str(key) + "&rand=" + str(self.random)
-        ret = self.http_lib._get(url)
+        url = res.urls['dino']
+        #+ '?key=' + str(key) + "&rand=" + str(self.random)
+        postData = {"key": str(key)}
+        ret = self.http_lib._post(url, postData)
         print 'DINO URL: ' + str(url)
         print "DINO: ",  ret
         if ret['httpcode'] != 200:
