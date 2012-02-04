@@ -24,7 +24,6 @@ class Login:
         self.username   = self.__settings__.getSetting( "username" )
         self.pwd        = self.__settings__.getSetting( "pwd" )
         self.session    = self.__settings__.getSetting( "session" )
-        
         if display == True:
             self.__settings__.openSettings()
             return 0
@@ -33,11 +32,13 @@ class Login:
             self.__settings__.openSettings()
     
         if not self.session:
+            print "Session not found"
+            return self._httpLogin(self.username, self.pwd)
+
+        if login == True:
+            print "Login forced !!!!!" 
             return self._httpLogin(self.username, self.pwd)
         
-        if login == True:
-            return self._httpLogin(self.username, self.pwd)
-            
         return 0
 
     def getSession(self):
