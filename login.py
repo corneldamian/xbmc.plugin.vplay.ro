@@ -73,6 +73,7 @@ class Login:
 
         print "Login ok"
         self.session = cookie
+        print cookie
         self.__settings__.setSetting('session', str(self.session))
         
         return True

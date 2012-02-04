@@ -204,6 +204,7 @@ class linkResolution:
                 
             data = url_ret['httpmsg'].strip('&subsData=').rstrip('\n')
             try:
+                data = data.expandtabs(2);
                 obj = json.loads(data)
                 fisier = codecs.open(sub_file_name, 'w', 'utf-8')
                 count = 1
