@@ -29,9 +29,7 @@ class Scrap:
         return match
         
     def scrapEpisodes(self, page):
-        #match=re.compile('<a href="(.+?)" class="serials-item"( style="margin-right: 0;")?><img src="(.+?)" width="160" height="85">( <div class="iswat" title="Watched"><img src="http://i.vplay.ro/ic/tick16.png"></div> )?(.+?)( <div class="isusb" title="Subtitrari">SUB</div>)?</a>').findall(page)
-        match = re.compile('<a href="(.+?)" title="(.+?)" class="coll-episode-box">\s*<span class="thumb" style="background-image:url\((.+?)\);"></span>\s*<span class="title" title="(.+?)">(.+?)</span>').findall(page);
-        print match[0]
+        match = re.compile('<a href="(.+?)" title="(.+?)" class="coll-episode-box">\s*<span class="thumb" style="background-image:url\((.+?)\);"></span>\s*<span class="title" title="(.+?)">(.+?)</span>(.+?)</a>', re.DOTALL).findall(page);
         return match
         
     def scrapEpisodeId(self, page):
