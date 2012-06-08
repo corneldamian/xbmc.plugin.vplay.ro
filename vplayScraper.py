@@ -7,7 +7,6 @@ class Scrap:
         if pos == -1:
             return [];
         page = page[:pos]
-        print page
         match=re.compile('<a href="(/c/.+?/)" title="(.+?)"><span class="coll_poster" title="(.+?)" style="background-image:url\((.+?)\);"></span>').findall(page);
         return match
 
@@ -29,7 +28,9 @@ class Scrap:
         return match
         
     def scrapEpisodes(self, page):
-        match = re.compile('<a href="(.+?)" title="(.+?)" class="coll-episode-box">\s*<span class="thumb" style="background-image:url\((.+?)\);"></span>\s*<span class="title" title="(.+?)">(.+?)</span>(.+?)</a>', re.DOTALL).findall(page);
+        #match = re.compile('<a href="(.+?)" title="(.+?)" class="coll-episode-box">\s*<span class="thumb" style="background-image:url\((.+?)\);"></span>\s*<span class="title" title="(.+?)">(.+?)</span>([.|\s|\t]+?)</a>').findall(page);
+        match = re.compile('<a href="(.+?)" title="(.+?)" class="coll-episode-box">\s*<span class="thumb" style="background-image:url\((.+?)\);"></span>\s*<span class="title" title="(.+?)">(.+?)</span>((.|\n)*?)</a>').findall(page);
+        print match[0]
         return match
         
     def scrapEpisodeId(self, page):

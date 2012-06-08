@@ -82,10 +82,10 @@ def VIDEOLINKS(url,name):
         url = res.urls['main']
         url = url + str(i[0])
         if len(i[5]) > 0 and i[5].find("Watched") != -1:
-            name = str(i[-2]) + " (Watched)"
+            name = str(i[4]) + " (Watched)"
         else:
-            name = str(i[-2])
-        if len(i[5]) > 0 and  i[5].find("Watched") != -1:
+            name = str(i[4])
+        if len(i[5]) > 0 and  i[5].find("subs") != -1:
             name = name + "(Subed)"
         addLink(name, url, i[2], 'play_video')
     
