@@ -37,6 +37,7 @@ class Http:
             req.add_header('Cookie', str(cookie))
         opener = urllib2.build_opener(SmartRedirectHandler())
         try:
+            print url
             page = opener.open(req)
         except urllib2.URLError, e:
             return {'httpcode': e.code, 'httpmsg': '', 'cookie': None}

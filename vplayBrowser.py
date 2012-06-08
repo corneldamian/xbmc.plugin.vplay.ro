@@ -31,13 +31,14 @@ class ListResources:
     
     
     def getLastPage(self):
-        p = self.http_lib._get(res.urls['serials'])
-        print "PAGE ==>" + str(p['httpcode'])
-        if p['httpcode'] == 200:
-            last_page = self.scrap.scrapLastPage(p['httpmsg'])
-            print "PAGE ==> " + str(last_page)
-        else:
-            last_page = 1
+        last_page = 110;
+#        p = self.http_lib._get(res.urls['serials'])
+#        print "PAGE ==>" + str(p['httpcode'])
+#        if p['httpcode'] == 200:
+#            last_page = self.scrap.scrapLastPage(p['httpmsg'])
+#            print "PAGE ==> " + str(last_page)
+#        else:
+#            last_page = 1
 #        if len(last_page) > 0:
 #            try:
 #                last_page = int(last_page[0][0])
@@ -56,11 +57,11 @@ class ListResources:
         else:
             try:
                 int(page)
-	        url = res.urls['serials'] + "/?page=" + str(page)
+	        url = res.urls['serials'] + "/" + str(page) + "/"
             except:
                 url = res.urls['serials']
 	if type == "Search":
-		url += "&s=" + search
+            url += "&s=" + search
 
         cookie = str(self.session)
         lst = [];

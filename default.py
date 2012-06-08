@@ -49,7 +49,7 @@ def SERIAL(page=None, type=None, search=None):
 	mode = 5
     if page < last_page:
         t = browser.get_thumb('next')
-        addNext('Next',page, 5, t)
+        addNext('Next',page, 1, t)
     
     xbmc.executebuiltin("Container.SetViewMode(500)") 
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)

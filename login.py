@@ -66,6 +66,7 @@ class Login:
             
     def _httpLogin(self, usr, pwd):
         print "Login started"
+        return;
         cookie = self.http_lib._get(res.urls['login'])['cookie']
         postData = { "usr_vplay": usr, "pwd": pwd, "rbm": "1", "login": "Conectare" }
         ret = self.http_lib._post(self.login_url, postData, cookie)
