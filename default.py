@@ -174,7 +174,7 @@ def startPlugin():
         if action == None:
             #print "mode 0"
             OPTIONS()
-            __login__.login(login=True)
+            #__login__.login(login=True)
     elif mode==1 and action==None:
         #print "mode 1"
         SERIAL(url, "Categorii")
@@ -226,6 +226,7 @@ if (__name__ == "__main__" ):
     import login, search
     __search__ = search.Search()
     __login__ = login.Login()
+    __login__.login();
     import vplayBrowser
     import vplayCommon
     import vplayScraper

@@ -38,6 +38,9 @@ class Login:
         if login == True:
             print "Login forced !!!!!" 
             return self._httpLogin(self.username, self.pwd)
+            
+        if self._httpCheckSession(self.session) != True:
+            return self._httpLogin(self.username, self.pwd)
         
         return 0
 
@@ -64,9 +67,19 @@ class Login:
                 return cols[6]
         raise ValueError('Could not find session ID')
             
+    def _httpCheckSession(self, cookie):
+        req = self.http_lib._get(res.urls['serials'], cookie);
+        
+        if req['httpcode'] != 200:
+            return False;
+        if hasattr(req, 'status') and req['status'] != 200:
+            return False;
+        
+        return True;
+    
     def _httpLogin(self, usr, pwd):
         print "Login started"
-        return;
+
         cookie = self.http_lib._get(res.urls['login'])['cookie']
         postData = { "usr_vplay": usr, "pwd": pwd, "rbm": "1", "login": "Conectare" }
         ret = self.http_lib._post(self.login_url, postData, cookie)
