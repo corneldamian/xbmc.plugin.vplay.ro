@@ -11,7 +11,7 @@ class Scrap:
         return match
 
     def scrapSearch(self, page):
-        match=re.compile('<a href="(/serials/browse.do\?sid=[0-9]+)" target="_top" class="group-item"(.+?)title="(.+?)"><img src="(.+?)" width="312" height="103" />(.+?)</a>').findall(page)
+        match=re.compile('<a href="(/c/.+?/)" title="(.+?)"><span class="coll_poster" title="(.+?)" style="background-image:url\((.+?)\);"></span>').findall(page)
         return match
         
     def scrapSerials(self, page):
