@@ -61,7 +61,7 @@ class ListResources:
             except:
                 url = res.urls['serials']
 	if type == "Search":
-            url += "&s=" + search
+            url = res.urls['search'] + search
 
         cookie = str(self.session)
         lst = [];
