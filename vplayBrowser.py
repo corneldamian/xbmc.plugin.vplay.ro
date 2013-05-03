@@ -154,6 +154,12 @@ class linkResolution:
         if os.path.isdir(subs) is False:
             os.makedirs(subs)
         self.subs_dir = subs
+
+    def _get_session(self):
+        val = self.__settings__.getSetting('session')
+        val = val+"; promo_shown=1"
+        xbmc.log("using session "+val)
+        return val;
             
     def convert_time_to_something(self, f):
         f = int(f)
