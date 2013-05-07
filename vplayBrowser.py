@@ -45,12 +45,18 @@ class ListResources:
 #            except:
 #                last_page = 1
         return last_page
+
+    def _get_session(self):
+        val = self.__settings__.getSetting('session')
+        val = val+"; promo_shown=1"
+        xbmc.log("using session "+val)
+        return val;
         
     def getSerials(self, page=None, type=None, search=None):
-        self.session = self.__settings__.getSetting('session')
+        self.session = self._get_session()
         if not self.session:
             self.__login__.login()
-            self.session = self.__settings__.getSetting('session')
+            self.session = self._get_session()
         
         if page == None:    
             url = res.urls['serials']
@@ -85,10 +91,11 @@ class ListResources:
         return lst
         
     def getSesons(self, url):
-        self.session = self.__settings__.getSetting('session')
+        self.session = self._get_session()
+	xbmc.log("getting sessons "+self.session);
         if not self.session:
             self.__login__.login()
-            self.session = self.__settings__.getSetting('session')
+            self.session = self._get_session()
             
         cookie =  str(self.session)
         ret = self.http_lib._get(url, cookie)
@@ -103,10 +110,10 @@ class ListResources:
         
         
     def getEpisodes(self, url):
-        self.session = self.__settings__.getSetting('session')
+        self.session = self._get_session()
         if not self.session:
             self.__login__.login()
-            self.session = self.__settings__.getSetting('session')
+            self.session = self._get_session()
             
         cookie =  str(self.session)
         ret = self.http_lib._get(url, cookie)
@@ -147,6 +154,12 @@ class linkResolution:
         if os.path.isdir(subs) is False:
             os.makedirs(subs)
         self.subs_dir = subs
+
+    def _get_session(self):
+        val = self.__settings__.getSetting('session')
+        val = val+"; promo_shown=1"
+        xbmc.log("using session "+val)
+        return val;
             
     def convert_time_to_something(self, f):
         f = int(f)
@@ -247,17 +260,17 @@ class linkResolution:
         return attrs
             
     def getRealLink(self, url):
-        self.session = self.__settings__.getSetting('session')
+        self.session = self._get_session()
         if not self.session:
             self.__login__.login()
-            self.session = self.__settings__.getSetting('session')
+            self.session = self._get_session()
         
         cookie =  str(self.session)
         ret = self.http_lib._get(url, cookie)
         
         if ret['httpcode'] == 301 or ret['httpcode'] == 302:
             __login__.login()
-            self.__settings__.getSetting('session')
+            self._get_session()
             ret = self.http_lib._get(url, cookie)
         
         if ret['httpcode'] != 200:
