@@ -10,6 +10,7 @@ class Scrap:
         match=re.compile('<a href="(/c/.+?/)" title="(.+?)"><span class="coll_poster" title="(.+?)" style="background-image:url\((.+?)\);"></span>').findall(page);
         return match
 
+
     def scrapFavorites(self, page):
         pos = page.find('<h2 style="color:#3b5998; font-size:17px; ">Cole');
         if pos == -1:
