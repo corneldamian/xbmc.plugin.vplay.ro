@@ -15,7 +15,8 @@ __dbg__ = __settings__.getSetting("debug") == "true"
 
 def OPTIONS():
     re = vplayBrowser.ListResources();
-    addDir('Favorite', res.urls['serials'], 4, re.get_thumb('favorite'), 6)
+    #addDir('Favorite', res.urls['serials'], 4, re.get_thumb('favorite'), 6)
+    addDir('Favorite','http://vplay.ro/colls/' + __settings__.getSetting( "username" ), 7, re.get_thumb('favorite'), 0)
     addDir('Seriale', res.urls['serials'], 1, re.get_thumb('seriale'), 30)
     if __settings__.getSetting('last_movie'):
     	import simplejson as json
@@ -107,6 +108,19 @@ def SEZON(url, name):
     xbmc.executebuiltin("Container.SetViewMode(550)") 
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
+def FAVORITES(url, name):
+    import simplejson as json
+    browser = vplayBrowser.ListResources()
+    lst = browser.getFavorites(url)
+    for i in lst:
+        main = res.urls['main']
+        url = main + str(i[0])
+
+        addDir(i[1],url, 2, i[3])
+    
+    xbmc.executebuiltin("Container.SetViewMode(500)")
+    xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
+
 def addNext(name,page,mode,iconimage):
     u=sys.argv[0]+"?url="+str(page)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
     liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
@@ -122,11 +136,15 @@ def addDir(name,url,mode,iconimage, len = 0):
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True, totalItems = len)
     return ok
 
-def addLink(name,url,iconimage,action):
+def addLink(name,url,iconimage,action, watched):
     ok=True
     url=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&action="+ str(action) + "&name="+urllib.quote_plus(name)
     liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-    liz.setInfo( type="Video", infoLabels={ "Title": name } )
+    infolabels = {}
+    infolabels["Title"] = name
+    if watched==True:
+	infolabels['playcount'] = 1           
+    liz.setInfo( type="Video", infoLabels=infolabels )
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
     return ok
 
@@ -197,7 +215,8 @@ def startPlugin():
     elif mode==6 and action==None:
         #print "mode 6"
         SEZON(url, name)
-
+    elif mode==7 and action==None:
+        FAVORITES(url, name)
         
     if action == 'play_video':
         details = __link__.getRealLink(url)
