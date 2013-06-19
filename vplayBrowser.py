@@ -127,7 +127,23 @@ class ListResources:
         
         return lst
             
+    def getFavorites(self, url):
+        self.session = self._get_session()
+        if not self.session:
+            self.__login__.login()
+            self.session = self._get_session()
+            
+        cookie =  str(self.session)
+        ret = self.http_lib._get(url, cookie)
+        lst = [];
+        if ret['httpcode'] == 200:
+            lst = self.scrap.scrapFavorites(ret['httpmsg'])
+        elif ret['httpcode'] == 301:
+            self.__login__.login()
+        else:
+            raise IOError('Could not get serial list: %s --> %s' % (ret['httpcode'], ret['httpmsg']))
         
+        return lst        
 
 
 class linkResolution:
