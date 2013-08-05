@@ -23,7 +23,7 @@ def OPTIONS():
     	movie = json.loads(__settings__.getSetting('last_movie'))
         addDir(movie['name'], movie['url'], 6, re.get_thumb('last'), 0)    
     addDir('Search','http://vplay.ro/serials/?s', 5, re.get_thumb('search-icon'), 0)    
-    addLink('Login','http://vplay.ro/login/', re.get_thumb('login') , 'login')
+    addLink('Login','http://vplay.ro/login/', re.get_thumb('login') , 'login', True)
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
 
 def SERIAL(page=None, type=None, search=None):
@@ -88,7 +88,7 @@ def VIDEOLINKS(url,name):
             name = str(i[3])
         if len(i[5]) > 0 and  i[5].find("subs") != -1:
             name = name + "(Subed)"
-        addLink(name, url, i[2], 'play_video')
+        addLink(name, url, i[2], 'play_video', False)
     
     xbmc.executebuiltin("Container.SetViewMode(500)")
     xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
