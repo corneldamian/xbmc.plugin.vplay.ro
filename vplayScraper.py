@@ -16,7 +16,7 @@ class Scrap:
         if pos == -1:
             return [];
         page = page[pos:]
-            pos = page.find('<div id="footer" class="foooter-wrap">');
+        pos = page.find('<div id="footer" class="foooter-wrap">');
         if pos == -1:
             return [];
 	    page = page[:pos]
